@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"bookstore/config"
+	"bookstore/global"
+)
 
 func main() {
-	fmt.Println("项目开始了")
+	// 初始化配置
+	config.InitConfig("conf/config.yaml")
+	// 初始化数据库
+	global.InitMysql()
+	// 初始化Redis
+	global.InitRedis()
 }
