@@ -38,6 +38,7 @@ func InitRedis() {
 		Password: redisConfig.Password,
 		DB:       redisConfig.DB,
 	})
+	RedisClient = client
 
 	str, err := client.Ping(context.TODO()).Result()
 	if err != nil {
