@@ -31,3 +31,12 @@ func (u *UserDAO) CheckUserExisits(username, phone, email string) (bool, error) 
 
 	return count > 0, nil
 }
+
+func (u *UserDAO) GetUserByUsername(username string) (*model.User, error) {
+	var user *model.User
+	err := u.db.Debug().Where("username = ?", username).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
