@@ -3,8 +3,9 @@ package router
 import (
 	"bookstore/web/controller"
 
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func InitRouter() *gin.Engine {
@@ -23,18 +24,20 @@ func InitRouter() *gin.Engine {
 		c.Next()
 	})
 
+	userController := controller.NewUserController()
 	v1 := r.Group("/api/v1")
 	{
 		user := v1.Group("/user")
 		{
-			user.POST("/register", controller.UserRegister)
-			user.POST("/login", controller.UserLogin)
+			user.POST("/register", userController.UserRegister)
+			user.POST("/login", userController.UserLogin)
 		}
 	}
 
+	captController := controller.NewCaptChaController()
 	captcha := v1.Group("/captcha")
 	{
-		captcha.GET("/generate", controller.GenerateCaptcha)
+		captcha.GET("/generate", captController.GenerateCaptcha)
 	}
 	return r
 }

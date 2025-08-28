@@ -7,10 +7,19 @@ import (
 	"net/http"
 )
 
-func GenerateCaptcha(ctx *gin.Context) {
+type CaptChaController struct {
+	CaptchaService *service.CaptchaService
+}
+
+func NewCaptChaController() *CaptChaController {
+	return &CaptChaController{
+		CaptchaService: service.NewCaptchaService(),
+	}
+}
+
+func (c *CaptChaController) GenerateCaptcha(ctx *gin.Context) {
 	// 生成图片验证码
-	svc := service.NewCaptchaService()
-	res, err := svc.GenerateCaptcha()
+	res, err := c.CaptchaService.GenerateCaptcha()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code":  -1,
