@@ -94,3 +94,11 @@ func (u *UserService) UserLogin(username, password string) (*LoginResponse, erro
 	}
 	return response, nil
 }
+
+func (u *UserService) GetUserByID(id int) (*model.User, error) {
+	user, err := u.UserDB.GetUserByID(id)
+	if err != nil {
+		return nil, errors.New("用户不存在")
+	}
+	return user, nil
+}

@@ -2,6 +2,7 @@ package router
 
 import (
 	"bookstore/web/controller"
+	"bookstore/web/middleware"
 
 	"net/http"
 
@@ -31,6 +32,13 @@ func InitRouter() *gin.Engine {
 		{
 			user.POST("/register", userController.UserRegister)
 			user.POST("/login", userController.UserLogin)
+		}
+		auth := user.Group("")
+		{
+			auth.Use(middleware.JWTAuthMiddleware())
+			{
+				auth.GET("/profile", userController.GetUserprofile)
+			}
 		}
 	}
 

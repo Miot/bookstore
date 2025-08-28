@@ -112,3 +112,36 @@ func (u *UserController) UserLogin(ctx *gin.Context) {
 		"data": loginResponse,
 	})
 }
+
+func (u *UserController) GetUserprofile(ctx *gin.Context) {
+	userID, exists := ctx.Get("userID")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"code": -1,
+			"msg":  "用户未登录",
+		})
+		return
+	}
+	user, err := u.UserService.GetUserByID(userID.(int))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": -1,
+			"msg":  err.Error(),
+		})
+		return
+	}
+	response := gin.H{
+		"id":         user.ID,
+		"username":   user.Username,
+		"email":      user.Email,
+		"phone":      user.Phone,
+		"avatar":     user.Avatar,
+		"created_at": user.CreatedAt.Format("2006-01-02 15:04:05"),
+		"updated_at": user.UpdatedAt.Format("2006-01-02 15:04:05"),
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "获取用户信息成功",
+		"data": response,
+	})
+}
