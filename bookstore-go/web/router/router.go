@@ -40,6 +40,7 @@ func InitRouter() *gin.Engine {
 				auth.GET("/profile", userController.GetUserprofile)
 				auth.PUT("/profile", userController.UpdateUserprofile)
 				auth.PUT("/password", userController.ChangePassword)
+				auth.DELETE("/logout", userController.Logout)
 			}
 		}
 	}

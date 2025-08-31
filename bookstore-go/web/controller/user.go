@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"bookstore/jwt"
 	"bookstore/model"
 	"bookstore/service"
 	"net/http"
@@ -252,4 +253,29 @@ func (u *UserController) ChangePassword(ctx *gin.Context) {
 		"msg":  "修改密码成功",
 	})
 
+}
+
+func (u *UserController) Logout(ctx *gin.Context) {
+	userID, exists := ctx.Get("userID")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"code": -1,
+			"msg":  "用户未登录",
+		})
+		return
+	}
+
+	err := jwt.RevokeToken(uint(userID.(int)))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": -1,
+			"msg":  "退出登录失败",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "退出登录成功",
+	})
 }
