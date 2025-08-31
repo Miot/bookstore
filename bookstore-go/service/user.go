@@ -102,3 +102,21 @@ func (u *UserService) GetUserByID(id int) (*model.User, error) {
 	}
 	return user, nil
 }
+
+func (u *UserService) UpdateUserInfo(user *model.User) error {
+	oldUser, err := u.UserDB.GetUserByID(user.ID)
+	if err != nil {
+		return err
+	}
+
+	oldUser.Username = user.Username
+	oldUser.Email = user.Email
+	oldUser.Phone = user.Phone
+	oldUser.Avatar = user.Avatar
+
+	// 更新数据库
+	if err := u.UserDB.UpdateUser(oldUser); err != nil {
+		return err
+	}
+	return nil
+}
