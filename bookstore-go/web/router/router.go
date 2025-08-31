@@ -26,6 +26,7 @@ func InitRouter() *gin.Engine {
 	})
 
 	userController := controller.NewUserController()
+	bookController := controller.NewBookController()
 	v1 := r.Group("/api/v1")
 	{
 		user := v1.Group("/user")
@@ -42,6 +43,11 @@ func InitRouter() *gin.Engine {
 				auth.PUT("/password", userController.ChangePassword)
 				auth.DELETE("/logout", userController.Logout)
 			}
+		}
+		book := v1.Group("/book")
+		{
+			book.GET("/hot", bookController.GetHotBooks)
+			book.GET("/new", bookController.GetNewBooks)
 		}
 	}
 

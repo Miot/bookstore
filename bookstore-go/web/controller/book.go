@@ -1,0 +1,59 @@
+package controller
+
+import (
+	"bookstore/service"
+	"net/http"
+
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+)
+
+type BookController struct {
+	BookService *service.BookService
+}
+
+func NewBookController() *BookController {
+	return &BookController{
+		BookService: service.NewBookService(),
+	}
+}
+
+func (b *BookController) GetHotBooks(c *gin.Context) {
+	// 根据销量降序排序
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "5"))
+	books, err := b.BookService.GetHotBooks(limit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":  -1,
+			"msg":   "获取热销书籍失败",
+			"error": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "获取热销书籍成功",
+		"data": books,
+	})
+
+}
+
+func (b *BookController) GetNewBooks(c *gin.Context) {
+	// 根据上架时间降序排序
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "5"))
+	books, err := b.BookService.GetNewBooks(limit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":  -1,
+			"msg":   "获取新品书籍失败",
+			"error": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "获取新品书籍成功",
+		"data": books,
+	})
+}
