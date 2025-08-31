@@ -206,3 +206,50 @@ func (u *UserController) UpdateUserprofile(ctx *gin.Context) {
 		"data": updatedUser,
 	})
 }
+
+func (u *UserController) ChangePassword(ctx *gin.Context) {
+	// 获取用户id
+	userId, err := ctx.Get("userID")
+	if !err {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"code": -1,
+			"msg":  "用户未登录",
+		})
+		return
+	}
+
+	var passwordData struct {
+		OldPassword string `json:"old_password"`
+		NewPassword string `json:"new_password"`
+	}
+	if err := ctx.ShouldBindJSON(&passwordData); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code":  -1,
+			"msg":   "请求参数错误",
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if len(passwordData.NewPassword) < 6 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code": -1,
+			"msg":  "密码长度不能小于6",
+		})
+		return
+	}
+
+	if err := u.UserService.ChangePassword(userId.(int), passwordData.OldPassword, passwordData.NewPassword); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code": -1,
+			"msg":  err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "修改密码成功",
+	})
+
+}

@@ -1,5 +1,7 @@
 package service
 
+//架构： service --> repository --> db
+
 import (
 	"bookstore/jwt"
 	"bookstore/model"
@@ -12,7 +14,6 @@ type UserService struct {
 	UserDB *repository.UserDAO
 }
 
-// service --> repository --> db
 func NewUserService() *UserService {
 	return &UserService{
 		UserDB: repository.NewUserDAO(),
@@ -117,6 +118,21 @@ func (u *UserService) UpdateUserInfo(user *model.User) error {
 	// 更新数据库
 	if err := u.UserDB.UpdateUser(oldUser); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (u *UserService) ChangePassword(userID int, oldPassword, newPassword string) error {
+	user, err := u.UserDB.GetUserByID(userID)
+	if err != nil {
+		return errors.New("用户不存在")
+	}
+	if user.Password != u.encodePassword(oldPassword) {
+		return errors.New("旧密码错误")
+	}
+	user.Password = u.encodePassword(newPassword)
+	if err = u.UserDB.UpdateUser(user); err != nil {
+		return errors.New("密码修改失败")
 	}
 	return nil
 }
