@@ -32,3 +32,18 @@ func (b *BookDAO) GetNewBooks(limit int) ([]model.Book, error) {
 	}
 	return books, nil
 }
+
+func (b *BookDAO) GetBooksByPage(page, pageSize int) ([]model.Book, int64, error) {
+	var books []model.Book
+	var total int64
+	if err := b.db.Model(&model.Book{}).Debug().Where("status = ?", 1).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * pageSize
+	if err := b.db.Debug().Where("status = ?", 1).Offset(offset).Limit(pageSize).Find(&books).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return books, total, nil
+}
