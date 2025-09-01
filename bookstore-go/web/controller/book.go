@@ -117,3 +117,21 @@ func (b *BookController) SearchBooks(c *gin.Context) {
 		},
 	})
 }
+
+func (b *BookController) GetBookDetail(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	book, err := b.BookService.GetBookDetail(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":  -1,
+			"msg":   "获取书籍详情失败",
+			"error": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "获取书籍详情成功",
+		"data": book,
+	})
+}

@@ -65,3 +65,11 @@ func (b *BookDAO) SearchBooksWithPage(keyword string, page, pageSize int) ([]mod
 
 	return books, total, nil
 }
+
+func (b *BookDAO) GetBookDetail(id int) (model.Book, error) {
+	var book model.Book
+	if err := b.db.Debug().Where("status = ?", 1).First(&book, id).Error; err != nil {
+		return book, err
+	}
+	return book, nil
+}
