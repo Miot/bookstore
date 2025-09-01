@@ -37,3 +37,19 @@ func (f *FavoriteDAO) GetUserFavorites(userID int, page, pageSize int, timeFilte
 
 	return favs, nil
 }
+
+func (f *FavoriteDAO) CheckFavorite(userID, bookID int) (bool, error) {
+	var count int64
+	if err := f.db.Debug().Model(&model.Favorite{}).Where("user_id = ? AND book_id = ?", userID, bookID).Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (f *FavoriteDAO) GetFavoriteCount(userID int) (int64, error) {
+	var count int64
+	if err := f.db.Debug().Model(&model.Favorite{}).Where("user_id = ?", userID).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}

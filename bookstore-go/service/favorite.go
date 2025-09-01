@@ -40,3 +40,11 @@ func (f *FavoriteService) GetFavoriteList(userID int, page, pageSize int, timeFi
 
 	return fav[start:end], int64(total), nil
 }
+
+func (f *FavoriteService) CheckFavorite(userID int, bookID int) (bool, error) {
+	return f.FavoriteDB.CheckFavorite(userID, bookID)
+}
+
+func (f *FavoriteService) GetFavoriteCount(userID int) (int64, error) {
+	return f.FavoriteDB.GetFavoriteCount(userID)
+}

@@ -66,6 +66,8 @@ func InitRouter() *gin.Engine {
 				favorite.POST("/:id", favoriteController.AddFavorite)
 				favorite.DELETE("/:id", favoriteController.DeleteFavorite)
 				favorite.GET("/list", favoriteController.GetFavoriteList)
+				favorite.GET("/:id/check", favoriteController.CheckFavorite)
+				favorite.GET("/count", favoriteController.GetFavoriteCount)
 			}
 		}
 	}

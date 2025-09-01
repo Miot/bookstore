@@ -130,3 +130,68 @@ func (f *FavoriteController) GetFavoriteList(c *gin.Context) {
 	})
 
 }
+
+func (f *FavoriteController) CheckFavorite(c *gin.Context) {
+	userID := getUserID(c)
+	if userID == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code": -1,
+			"msg":  "用户未登录",
+		})
+		return
+	}
+
+	bookID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code": -1,
+			"msg":  "书本ID格式错误",
+		})
+		return
+	}
+
+	isFavorited, err := f.FavoriteService.CheckFavorite(userID, bookID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": -1,
+			"msg":  "检查收藏状态失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "检查收藏状态成功",
+		"data": gin.H{
+			"is_favorited": isFavorited,
+		},
+	})
+}
+
+func (f *FavoriteController) GetFavoriteCount(c *gin.Context) {
+	userID := getUserID(c)
+	if userID == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code": -1,
+			"msg":  "用户未登录",
+		})
+		return
+	}
+
+	count, err := f.FavoriteService.GetFavoriteCount(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": -1,
+			"msg":  "获取收藏数量失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "获取收藏数量成功",
+		"data": gin.H{
+			"count": count,
+		},
+	})
+}
