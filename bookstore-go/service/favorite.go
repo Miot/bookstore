@@ -1,6 +1,9 @@
 package service
 
-import "bookstore/repository"
+import (
+	"bookstore/model"
+	"bookstore/repository"
+)
 
 type FavoriteService struct {
 	FavoriteDB *repository.FavoriteDAO
@@ -18,4 +21,22 @@ func (f *FavoriteService) AddFavorite(userID int, bookID int) error {
 
 func (f *FavoriteService) DeleteFavorite(userID int, bookID int) error {
 	return f.FavoriteDB.DeleteFavorite(userID, bookID)
+}
+
+func (f *FavoriteService) GetFavoriteList(userID int, page, pageSize int, timeFilter string) ([]*model.Favorite, int64, error) {
+	fav, err := f.FavoriteDB.GetUserFavorites(userID, page, pageSize, timeFilter)
+	if err != nil {
+		return nil, 0, err
+	}
+	total := len(fav)
+	start := (page - 1) * pageSize
+	end := start + pageSize
+	if start >= total {
+		return []*model.Favorite{}, 0, nil
+	}
+	if end > total {
+		end = total
+	}
+
+	return fav[start:end], int64(total), nil
 }
