@@ -73,3 +73,11 @@ func (b *BookDAO) GetBookDetail(id int) (model.Book, error) {
 	}
 	return book, nil
 }
+
+func (b *BookDAO) GetBookByID(id int) (*model.Book, error) {
+	var book model.Book
+	if err := b.db.Debug().Where("status = ?", 1).First(&book, id).Error; err != nil {
+		return nil, err
+	}
+	return &book, nil
+}
