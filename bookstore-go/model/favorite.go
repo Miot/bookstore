@@ -7,7 +7,7 @@ type Favorite struct {
 	UserID    int       `gorm:"not null" json:"user_id"`
 	BookID    int       `gorm:"not null" json:"book_id"`
 	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Book      *Book     `gorm:"foreignKey:BookID" json:"book,omitempty"`
 }
 
 func (f *Favorite) TableName() string {
