@@ -15,3 +15,7 @@ func NewFavoriteService() *FavoriteService {
 func (f *FavoriteService) AddFavorite(userID int, bookID int) error {
 	return f.FavoriteDB.AddFavorite(userID, bookID)
 }
+
+func (f *FavoriteService) DeleteFavorite(userID int, bookID int) error {
+	return f.FavoriteDB.DeleteFavorite(userID, bookID)
+}

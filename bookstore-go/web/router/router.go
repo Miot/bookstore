@@ -59,11 +59,12 @@ func InitRouter() *gin.Engine {
 			book.GET("/search", bookController.SearchBooks)
 			book.GET("/detail/:id", bookController.GetBookDetail)
 		}
-		favorited := v1.Group("/favorite")
+		favorite := v1.Group("/favorite")
 		{
-			favorited.Use(middleware.JWTAuthMiddleware())
+			favorite.Use(middleware.JWTAuthMiddleware())
 			{
-				favorited.POST("/:id", favoriteController.AddFavorite)
+				favorite.POST("/:id", favoriteController.AddFavorite)
+				favorite.DELETE("/:id", favoriteController.DeleteFavorite)
 			}
 		}
 	}
