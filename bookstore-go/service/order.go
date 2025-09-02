@@ -5,6 +5,7 @@ import (
 	"bookstore/repository"
 	"errors"
 	"fmt"
+	"math/rand"
 	"time"
 )
 
@@ -40,7 +41,7 @@ func (o *OrderService) CreateOrder(req *CreateOrderRequest) (*model.Order, error
 		return nil, err
 	}
 	// 生成订单号
-	orderNo := fmt.Sprintf("ORD%d", time.Now().UnixNano())
+	orderNo := fmt.Sprintf("ORD%d%06d", time.Now().UnixNano(), rand.Intn(1000000))
 	var totalAmount int
 	var orderItems []*model.OrderItem
 	for _, item := range req.Items {
@@ -86,4 +87,17 @@ func (o *OrderService) CheckStockAvailability(items []OrderItems) error {
 
 func (o *OrderService) GetOrderList(userID int, page, pageSize int) ([]*model.Order, int64, error) {
 	return o.OrderDB.GetOrderList(userID, page, pageSize)
+}
+
+func (o *OrderService) PayOrder(orderID int) error {
+	// 检查订单是否存在
+	order, err := o.OrderDB.GetOrderByID(orderID)
+	if err != nil {
+		return err
+	}
+	if order.Status != 0 {
+		return errors.New("订单状态异常")
+	}
+	// 更新订单状态
+	return o.OrderDB.UpdateOrderStatus(order)
 }

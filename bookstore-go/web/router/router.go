@@ -77,6 +77,7 @@ func InitRouter() *gin.Engine {
 			{
 				order.POST("/create", orderController.CreateOrder)
 				order.GET("/list", orderController.GetOrderList)
+				order.POST("/:id/pay", orderController.PayOrder)
 			}
 		}
 	}

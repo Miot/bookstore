@@ -5,8 +5,9 @@ import (
 
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type OrderController struct {
@@ -88,5 +89,29 @@ func (o *OrderController) GetOrderList(c *gin.Context) {
 			"page_size":  pageSize,
 			"total_page": (total + int64(pageSize) - 1) / int64(pageSize),
 		},
+	})
+}
+
+func (o *OrderController) PayOrder(c *gin.Context) {
+	orderID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": -1,
+			"msg":  "无效订单ID",
+		})
+		return
+	}
+
+	if err = o.OrderService.PayOrder(orderID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":  -1,
+			"msg":   "支付订单失败",
+			"error": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "支付订单成功",
 	})
 }
