@@ -83,3 +83,7 @@ func (o *OrderService) CheckStockAvailability(items []OrderItems) error {
 	}
 	return nil
 }
+
+func (o *OrderService) GetOrderList(userID int, page, pageSize int) ([]*model.Order, int64, error) {
+	return o.OrderDB.GetOrderList(userID, page, pageSize)
+}

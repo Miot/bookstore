@@ -76,6 +76,7 @@ func InitRouter() *gin.Engine {
 			order.Use(middleware.JWTAuthMiddleware())
 			{
 				order.POST("/create", orderController.CreateOrder)
+				order.GET("/list", orderController.GetOrderList)
 			}
 		}
 	}

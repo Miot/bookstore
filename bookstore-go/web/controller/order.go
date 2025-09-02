@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 type OrderController struct {
@@ -52,5 +53,40 @@ func (o *OrderController) CreateOrder(c *gin.Context) {
 		"code": 0,
 		"msg":  "创建订单成功",
 		"data": order,
+	})
+}
+
+func (o *OrderController) GetOrderList(c *gin.Context) {
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "12"))
+
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code": -1,
+			"msg":  "用户未登录",
+		})
+		return
+	}
+
+	orders, total, err := o.OrderService.GetOrderList(userID.(int), page, pageSize)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":  -1,
+			"msg":   "获取订单列表失败",
+			"error": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "获取订单列表成功",
+		"data": gin.H{
+			"orders":     orders,
+			"total":      total,
+			"page":       page,
+			"page_size":  pageSize,
+			"total_page": (total + int64(pageSize) - 1) / int64(pageSize),
+		},
 	})
 }
