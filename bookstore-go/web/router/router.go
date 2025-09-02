@@ -31,6 +31,7 @@ func InitRouter() *gin.Engine {
 	favoriteController := controller.NewFavoriteController()
 	orderController := controller.NewOrderController()
 	categoryController := controller.NewCategoryController()
+	carouselController := controller.NewCarouselController()
 
 	v1 := r.Group("/api/v1")
 	{
@@ -84,6 +85,10 @@ func InitRouter() *gin.Engine {
 		category := v1.Group("/category")
 		{
 			category.GET("/list", categoryController.GetCategoryList)
+		}
+		carousel := v1.Group("/carousel")
+		{
+			carousel.GET("/list", carouselController.GetCarouselList)
 		}
 	}
 

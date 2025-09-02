@@ -16,5 +16,5 @@ type Carousel struct {
 }
 
 func (c *Carousel) TableName() string {
-	return "carousels"
+	return "carousel"
 }
