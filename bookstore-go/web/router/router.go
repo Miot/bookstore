@@ -30,6 +30,7 @@ func InitRouter() *gin.Engine {
 	bookController := controller.NewBookController()
 	favoriteController := controller.NewFavoriteController()
 	orderController := controller.NewOrderController()
+	categoryController := controller.NewCategoryController()
 
 	v1 := r.Group("/api/v1")
 	{
@@ -79,6 +80,10 @@ func InitRouter() *gin.Engine {
 				order.GET("/list", orderController.GetOrderList)
 				order.POST("/:id/pay", orderController.PayOrder)
 			}
+		}
+		category := v1.Group("/category")
+		{
+			category.GET("/list", categoryController.GetCategoryList)
 		}
 	}
 
